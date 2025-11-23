@@ -36,8 +36,8 @@ public class Simulation {
         Names[][] names = renderWorld.prepare(universe);
         printStatusLine(universe);
         renderWorld.render(names);
-        while (!universe.getHerbivore().isEmpty()) {
-            List<Herbivore> herbivores = new ArrayList<>(universe.getHerbivore().values());
+        while (!universe.getHerbivores().isEmpty()) {
+            List<Herbivore> herbivores = new ArrayList<>(universe.getHerbivores().values());
             herbivores.stream()
                     .forEach(a ->
                             a.eatTargets(universe,renderWorld)
@@ -75,7 +75,7 @@ public class Simulation {
         out.println("_________________________");
         String line = "трава: %d; кролики: %d; шаг = %d".formatted(
                 universe.getGrasses().size(),
-                universe.getHerbivore().size(),
+                universe.getHerbivores().size(),
                 universe.getStepId());
         out.println(line);
     }
