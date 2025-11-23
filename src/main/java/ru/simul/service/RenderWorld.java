@@ -16,7 +16,7 @@ public class RenderWorld {
         Set<Coordinate> rocks = universe.getRocks();
         Set<Coordinate> trees = universe.getTrees();
         Set<Coordinate> grasses = universe.getGrasses().keySet();
-        Set<Coordinate> herbivores = universe.getHerbivore().keySet();
+        Set<Coordinate> herbivores = universe.getHerbivores().keySet();
         Set<Coordinate> predators = universe.getPredators().keySet();
         Names[][] arrNames = new Names[field.maxX()][field.maxY()];
         for (int x = 0; x < field.maxX(); x++) {

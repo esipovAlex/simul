@@ -1,24 +1,28 @@
 package ru.simul.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.simul.service.RenderWorld;
 import ru.simul.world.*;
 import ru.simul.world.*;
 
 import java.util.*;
 
+@Getter
+@Setter
 public abstract class Creature extends Entity{
 
     private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
     protected int hp;
 
-    protected int getHp() {
+    /*protected int getHp() {
         return hp;
     }
 
     protected void setHp(int hp) {
         this.hp = hp;
-    }
+    }*/
 
     protected NextStep move(Universe universe, Coordinate first, Names targetName) {
         Coordinate next;
@@ -102,7 +106,7 @@ public abstract class Creature extends Entity{
         Set<Coordinate> targets;
         switch (targetName) {
             case GRASS -> targets = universe.getGrasses().keySet();
-            case HERBIVORE -> targets = universe.getHerbivore().keySet();
+            case HERBIVORE -> targets = universe.getHerbivores().keySet();
             default -> targets = Set.of();
         }
         return targets;

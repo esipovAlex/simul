@@ -50,7 +50,7 @@ public class InitWorld {
 
         Set<Coordinate> herbivores = getRandomCoordinates(field, allCoordinate, totalHerbivore, Set.of());
         Map<Coordinate, Herbivore> mH =herbivores.stream().collect(Collectors.toMap(a -> a, Herbivore::new, (a, b) -> a));
-        universe.setHerbivore(mH);
+        universe.setHerbivores(mH);
         allCoordinate.addAll(herbivores);
 
         Set<Coordinate> predators = getRandomCoordinates(field, allCoordinate, totalPredator, herbivores);
