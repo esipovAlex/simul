@@ -28,8 +28,7 @@ public class Universe {
         if (nextStep.target().x() != -1) {
             grasses.remove(nextStep.target());
         }
-        Herbivore herbivore = herbivores.get(first);
-        herbivores.remove(first);
+        Herbivore herbivore = herbivores.remove(first);
         herbivores.put(nextStep.step(), herbivore);
     }
 
@@ -37,8 +36,7 @@ public class Universe {
         if (nextStep.target().x() != -1) {
             herbivores.remove(nextStep.target());
         }
-        Predator predator = predators.get(first);
-        predators.remove(first);
+        Predator predator = predators.remove(first);
         predators.put(nextStep.step(), predator);
     }
 }
