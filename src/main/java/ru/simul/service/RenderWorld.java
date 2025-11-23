@@ -7,6 +7,7 @@ import ru.simul.world.Universe;
 
 import java.util.Set;
 import java.util.StringJoiner;
+import static java.lang.System.out;
 
 public class RenderWorld {
 
@@ -46,7 +47,7 @@ public class RenderWorld {
             for (Names names : arrName) {
                 joiner.add(names.getText());
             }
-            System.out.println(joiner);
+            out.println(joiner);
         }
     }
 }

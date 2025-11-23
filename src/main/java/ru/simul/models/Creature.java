@@ -1,5 +1,6 @@
 package ru.simul.models;
 
+import ru.simul.service.RenderWorld;
 import ru.simul.world.*;
 import ru.simul.world.*;
 
@@ -19,14 +20,17 @@ public abstract class Creature extends Entity{
         this.hp = hp;
     }
 
-    protected NextStep move(Universe universe, Coordinate first, Set<Coordinate> targetSet, Names target) {
+    protected NextStep move(Universe universe, Coordinate first, Names targetName) {
         Coordinate next;
         Coordinate remove = new Coordinate(-1, -1);
-        if (isAdjacentToAnyTarget(first, targetSet)) {
-            next = findAdjacentTarget(first, targetSet);
+
+        Set<Coordinate> targets = coordsTargetByName(universe, targetName);
+
+        if (isAdjacentToAnyTarget(first, targets)) {
+            next = findAdjacentTarget(first, targets);
             remove = next;
         } else {
-            next = step(universe, first, target);
+            next = step(universe, first, targetName);
         }
         return new NextStep(next, remove);
     }
@@ -46,13 +50,7 @@ public abstract class Creature extends Entity{
 
     protected Coordinate step(Universe universe, Coordinate start, Names targetName) {
         Field field = universe.getField();
-        Set<Coordinate> targets;
-        switch (targetName) {
-            case GRASS -> targets = universe.getGrasses().keySet();
-            case HERBIVORE -> targets = universe.getHerbivore().keySet();
-            default -> targets = Set.of();
-        }
-
+        Set<Coordinate> targets = coordsTargetByName(universe, targetName);
         Names[][] arrNames = universe.getNames();
         int xMax = field.maxX();
         int yMax = field.maxY();
@@ -99,4 +97,16 @@ public abstract class Creature extends Entity{
                 arrNames[x][y].equals(Names.CELL) &&
                 !visited[x][y];
     }
+
+    private Set<Coordinate> coordsTargetByName(Universe universe, Names targetName) {
+        Set<Coordinate> targets;
+        switch (targetName) {
+            case GRASS -> targets = universe.getGrasses().keySet();
+            case HERBIVORE -> targets = universe.getHerbivore().keySet();
+            default -> targets = Set.of();
+        }
+        return targets;
+    }
+
+    public abstract Universe eatTargets(Universe universe, RenderWorld renderWorld);
 }

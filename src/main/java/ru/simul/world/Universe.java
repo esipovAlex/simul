@@ -15,7 +15,7 @@ public class Universe {
     private Set<Coordinate> rocks = new HashSet<>();
     private Set<Coordinate> trees = new HashSet<>();
     private Map<Coordinate, Grass> grasses = new HashMap<>();
-    private Map<Coordinate, Herbivore> herbivore = new HashMap<>();
+    private Map<Coordinate, Herbivore> herbivores = new HashMap<>();
     private Map<Coordinate, Predator> predators = new HashMap<>();
     private Names[][] names;
     private int stepId;
@@ -53,11 +53,11 @@ public class Universe {
     }
 
     public Map<Coordinate, Herbivore> getHerbivore() {
-        return herbivore;
+        return herbivores;
     }
 
     public void setHerbivore(Map<Coordinate, Herbivore> herbivore) {
-        this.herbivore = herbivore;
+        this.herbivores = herbivore;
     }
 
     public Map<Coordinate, Predator> getPredators() {
@@ -82,5 +82,23 @@ public class Universe {
 
     public void setStepId(int stepId) {
         this.stepId = stepId;
+    }
+
+    public void refreshHerbivore(Coordinate first, NextStep nextStep) {
+        if (nextStep.target().x() != -1) {
+            grasses.remove(nextStep.target());
+        }
+        Herbivore herbivore = herbivores.get(first);
+        herbivores.remove(first);
+        herbivores.put(nextStep.step(), herbivore);
+    }
+
+    public void refreshPredator(Coordinate first, NextStep nextStep) {
+        if (nextStep.target().x() != -1) {
+            herbivores.remove(nextStep.target());
+        }
+        Predator predator = predators.get(first);
+        predators.remove(first);
+        predators.put(nextStep.step(), predator);
     }
 }

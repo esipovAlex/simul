@@ -6,9 +6,9 @@ import ru.simul.models.Herbivore;
 import ru.simul.models.Predator;
 import ru.simul.service.InitWorld;
 import ru.simul.service.RenderWorld;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import static java.lang.System.out;
 
 public class Simulation {
 
@@ -17,17 +17,17 @@ public class Simulation {
     private final List<Names[][]> loop = new ArrayList<>();
 
     public static void main(String[] args) throws InterruptedException {
-        Thread keyListener = new Thread(new KeyListener());
-        keyListener.setDaemon(true);
-        keyListener.start();
-        System.out.println("===START SIMULATION===");
         Simulation simulation = new Simulation();
         InitWorld initWorld = new InitWorld();
         RenderWorld renderWorld = new RenderWorld();
         Universe universe = initWorld.createUniverse();
         simulation.fillLoop(universe.getField().maxX(), universe.getField().maxY());
+        out.println("===START SIMULATION===");
+        Thread keyListener =  new Thread(new KeyListener());
+        keyListener.setDaemon(true);
+        keyListener.start();
         simulation.renderWithUniverse(universe, renderWorld);
-        System.out.println("===END SIMULATION ===");
+        out.println("===END SIMULATION ===");
     }
 
     private void renderWithUniverse(Universe universe, RenderWorld renderWorld) throws InterruptedException {
@@ -40,12 +40,12 @@ public class Simulation {
             List<Herbivore> herbivores = new ArrayList<>(universe.getHerbivore().values());
             herbivores.stream()
                     .forEach(a ->
-                            a.eatGrasses(universe,renderWorld)
+                            a.eatTargets(universe,renderWorld)
                     );
             List<Predator> predators = new ArrayList<>(universe.getPredators().values());
             predators.stream()
                     .forEach(a ->
-                            a.eatRabbits(universe, renderWorld)
+                            a.eatTargets(universe, renderWorld)
                     );
             universe.setStepId(stepId++);
             names = renderWorld.prepare(universe);
@@ -56,8 +56,8 @@ public class Simulation {
             renderWorld.render(names);
             TimeUnit.MILLISECONDS.sleep(1000L);
             if (isPaused) {
-                System.out.println("\n>>> ПРИЛОЖЕНИЕ НА ПАУЗЕ <<<");
-                System.out.println("Нажмите 'Пробел' и Enter для продолжения...");
+                out.println("\n>>> ПРИЛОЖЕНИЕ НА ПАУЗЕ <<<");
+                out.println("Нажмите 'Пробел' и Enter для продолжения...");
                 while (isPaused) {
                     try {
                         Thread.sleep(200);
@@ -66,16 +66,18 @@ public class Simulation {
                         break;
                     }
                 }
-                System.out.println(">>> ПРОДОЛЖЕНИЕ РАБОТЫ <<<\n");
+                out.println(">>> ПРОДОЛЖЕНИЕ РАБОТЫ <<<\n");
             }
         }
     }
 
     private void printStatusLine(Universe universe) {
-        System.out.println("_________________________");
-        System.out.println("трава: " + universe.getGrasses().size()
-                + "; кролики: " + universe.getHerbivore().size()
-                + "; шаг = " + universe.getStepId());
+        out.println("_________________________");
+        String line = "трава: %d; кролики: %d; шаг = %d".formatted(
+                universe.getGrasses().size(),
+                universe.getHerbivore().size(),
+                universe.getStepId());
+        out.println(line);
     }
 
     private boolean isLoopRender(Names[][] names) {
@@ -103,9 +105,9 @@ public class Simulation {
                     if (" ".equals(input)) {
                         isPaused = !isPaused;
                         if (isPaused) {
-                            System.out.println(">> Команда: ПАУЗА");
+                            out.println(">> Команда: ПАУЗА");
                         } else {
-                            System.out.println(">> Команда: ПРОДОЛЖИТЬ");
+                            out.println(">> Команда: ПРОДОЛЖИТЬ");
                         }
                     }
                 }
