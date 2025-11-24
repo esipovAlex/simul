@@ -1,12 +1,12 @@
 package ru.simul.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import ru.simul.world.Coordinate;
 
+@Getter
+@Setter
 public abstract class Entity {
 
-    protected Coordinate coordinate;
-
-    protected void setCoordinate(Coordinate coordinate) {
-        this.coordinate = coordinate;
-    }
+    private Coordinate coordinate;
 }

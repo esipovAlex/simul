@@ -8,11 +8,13 @@ import ru.simul.service.InitWorld;
 import ru.simul.service.RenderWorld;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static java.lang.System.out;
 
 public class Simulation {
 
-    private static volatile boolean isPaused = false;
+    private static volatile AtomicBoolean isPaused = new AtomicBoolean(false);
 
     private final List<Names[][]> loop = new ArrayList<>();
 
@@ -40,7 +42,7 @@ public class Simulation {
             List<Herbivore> herbivores = new ArrayList<>(universe.getHerbivores().values());
             herbivores.stream()
                     .forEach(a ->
-                            a.eatTargets(universe,renderWorld)
+                            a.eatTargets(universe, renderWorld)
                     );
             List<Predator> predators = new ArrayList<>(universe.getPredators().values());
             predators.stream()
@@ -55,10 +57,10 @@ public class Simulation {
             printStatusLine(universe);
             renderWorld.render(names);
             TimeUnit.MILLISECONDS.sleep(1000L);
-            if (isPaused) {
+            if (isPaused.get()) {
                 out.println("\n>>> ПРИЛОЖЕНИЕ НА ПАУЗЕ <<<");
                 out.println("Нажмите 'Пробел' и Enter для продолжения...");
-                while (isPaused) {
+                while (isPaused.get()) {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
@@ -84,8 +86,8 @@ public class Simulation {
         loop.set(2, loop.get(1));
         loop.set(1, loop.get(0));
         loop.set(0, names);
-        return Arrays.deepEquals(loop.get(0), loop.get(1)) ||
-                Arrays.deepEquals(loop.get(0), loop.get(2));
+        return Arrays.deepEquals(loop.get(0), loop.get(1))
+                || Arrays.deepEquals(loop.get(0), loop.get(2));
     }
 
     private void fillLoop(int x, int y) {
@@ -96,6 +98,7 @@ public class Simulation {
     }
 
     static class KeyListener implements Runnable {
+
         @Override
         public void run() {
 
@@ -103,8 +106,8 @@ public class Simulation {
                 while (true) {
                     String input = scanner.nextLine();
                     if (" ".equals(input)) {
-                        isPaused = !isPaused;
-                        if (isPaused) {
+                        isPaused.set(!isPaused.get());
+                        if (isPaused.get()) {
                             out.println(">> Команда: ПАУЗА");
                         } else {
                             out.println(">> Команда: ПРОДОЛЖИТЬ");

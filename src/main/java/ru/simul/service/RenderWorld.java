@@ -20,7 +20,7 @@ public class RenderWorld {
         Set<Coordinate> predators = universe.getPredators().keySet();
         Names[][] arrNames = new Names[field.maxX()][field.maxY()];
         for (int x = 0; x < field.maxX(); x++) {
-            for (int y = 0;y < field.maxY(); y++) {
+            for (int y = 0; y < field.maxY(); y++) {
                 Coordinate coordinate = new Coordinate(x, y);
                 if (rocks.contains(coordinate)) {
                     arrNames[x][y] = Names.ROCK;

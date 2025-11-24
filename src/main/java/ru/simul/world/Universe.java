@@ -21,6 +21,7 @@ public class Universe {
     private Map<Coordinate, Grass> grasses = new HashMap<>();
     private Map<Coordinate, Herbivore> herbivores = new HashMap<>();
     private Map<Coordinate, Predator> predators = new HashMap<>();
+    private Set<Coordinate> fillsCells = new HashSet<>();
     private Names[][] names;
     private int stepId;
 

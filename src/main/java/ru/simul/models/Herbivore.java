@@ -8,7 +8,7 @@ import ru.simul.world.Universe;
 
 public class Herbivore extends Creature {
 
-    private static final Names target = Names.GRASS;
+    private static final Names TARGET = Names.GRASS;
 
     public Herbivore(Coordinate coordinate) {
         setCoordinate(coordinate);
@@ -16,8 +16,8 @@ public class Herbivore extends Creature {
 
     @Override
     public Universe eatTargets(Universe universe, RenderWorld renderWorld) {
-        NextStep nextStep = move(universe, coordinate, target);
-        universe.refreshHerbivore(coordinate, nextStep);
+        NextStep nextStep = move(universe, this.getCoordinate(), TARGET);
+        universe.refreshHerbivore(this.getCoordinate(), nextStep);
         renderWorld.prepare(universe);
         setCoordinate(nextStep.step());
         return universe;

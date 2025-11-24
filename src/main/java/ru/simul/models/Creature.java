@@ -10,19 +10,11 @@ import java.util.*;
 
 @Getter
 @Setter
-public abstract class Creature extends Entity{
+public abstract class Creature extends Entity {
 
     private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 
-    protected int hp;
-
-    /*protected int getHp() {
-        return hp;
-    }
-
-    protected void setHp(int hp) {
-        this.hp = hp;
-    }*/
+    private int hp;
 
     protected NextStep move(Universe universe, Coordinate first, Names targetName) {
         Coordinate next;
@@ -96,20 +88,18 @@ public abstract class Creature extends Entity{
     }
 
     private boolean isValidMove(Field field, Names[][] arrNames, int x, int y, boolean[][] visited) {
-        return (x >= 0 && x < field.maxX()) &&
-                (y >= 0 && y < field.maxY()) &&
-                arrNames[x][y].equals(Names.CELL) &&
-                !visited[x][y];
+        return (x >= 0 && x < field.maxX())
+                && (y >= 0 && y < field.maxY())
+                && arrNames[x][y].equals(Names.CELL)
+                && !visited[x][y];
     }
 
     private Set<Coordinate> coordsTargetByName(Universe universe, Names targetName) {
-        Set<Coordinate> targets;
-        switch (targetName) {
-            case GRASS -> targets = universe.getGrasses().keySet();
-            case HERBIVORE -> targets = universe.getHerbivores().keySet();
-            default -> targets = Set.of();
-        }
-        return targets;
+        return switch (targetName) {
+            case GRASS -> universe.getGrasses().keySet();
+            case HERBIVORE -> universe.getHerbivores().keySet();
+            default -> Set.of();
+        };
     }
 
     public abstract Universe eatTargets(Universe universe, RenderWorld renderWorld);
