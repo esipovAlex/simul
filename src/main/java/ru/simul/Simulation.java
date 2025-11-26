@@ -1,35 +1,40 @@
 package ru.simul;
 
-import ru.simul.world.Names;
-import ru.simul.world.Universe;
 import ru.simul.models.Herbivore;
 import ru.simul.models.Predator;
 import ru.simul.service.InitWorld;
+import ru.simul.service.ReadProperties;
 import ru.simul.service.RenderWorld;
-import java.util.*;
+import ru.simul.world.Names;
+import ru.simul.world.Universe;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.System.out;
+import static ru.simul.consts.Messages.*;
 
 public class Simulation {
 
-    private static volatile AtomicBoolean isPaused = new AtomicBoolean(false);
+    private static final AtomicBoolean IS_PAUSED = new AtomicBoolean(false);
 
     private final List<Names[][]> loop = new ArrayList<>();
 
     public static void main(String[] args) throws InterruptedException {
         Simulation simulation = new Simulation();
         InitWorld initWorld = new InitWorld();
-        RenderWorld renderWorld = new RenderWorld();
-        Universe universe = initWorld.createUniverse();
+        Universe universe = initWorld.createUniverse(new ReadProperties());
         simulation.fillLoop(universe.getField().maxX(), universe.getField().maxY());
-        out.println("===START SIMULATION===");
+        out.println(START.getText());
         Thread keyListener =  new Thread(new KeyListener());
         keyListener.setDaemon(true);
         keyListener.start();
-        simulation.renderWithUniverse(universe, renderWorld);
-        out.println("===END SIMULATION ===");
+        simulation.renderWithUniverse(universe, new RenderWorld());
+        out.println(END.getText());
     }
 
     private void renderWithUniverse(Universe universe, RenderWorld renderWorld) throws InterruptedException {
@@ -57,10 +62,11 @@ public class Simulation {
             printStatusLine(universe);
             renderWorld.render(names);
             TimeUnit.MILLISECONDS.sleep(1000L);
-            if (isPaused.get()) {
-                out.println("\n>>> ПРИЛОЖЕНИЕ НА ПАУЗЕ <<<");
-                out.println("Нажмите 'Пробел' и Enter для продолжения...");
-                while (isPaused.get()) {
+            if (IS_PAUSED.get()) {
+                out.println();
+                out.println(ON_PAUSE.getText());
+                out.println(PRESS_SPASE_ENTER.getText());
+                while (IS_PAUSED.get()) {
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
@@ -68,14 +74,14 @@ public class Simulation {
                         break;
                     }
                 }
-                out.println(">>> ПРОДОЛЖЕНИЕ РАБОТЫ <<<\n");
+                out.println(CONTINUE.getText());
             }
         }
     }
 
     private void printStatusLine(Universe universe) {
-        out.println("_________________________");
-        String line = "трава: %d; кролики: %d; шаг = %d".formatted(
+        out.println(STEP_SEPARATOR.getText());
+        String line = STATUS_LINE.getText().formatted(
                 universe.getGrasses().size(),
                 universe.getHerbivores().size(),
                 universe.getStepId());
@@ -101,16 +107,15 @@ public class Simulation {
 
         @Override
         public void run() {
-
             try (Scanner scanner = new Scanner(System.in)) {
                 while (true) {
                     String input = scanner.nextLine();
                     if (" ".equals(input)) {
-                        isPaused.set(!isPaused.get());
-                        if (isPaused.get()) {
-                            out.println(">> Команда: ПАУЗА");
+                        IS_PAUSED.set(!IS_PAUSED.get());
+                        if (IS_PAUSED.get()) {
+                            out.println(COMMAND_PAUSE.getText());
                         } else {
-                            out.println(">> Команда: ПРОДОЛЖИТЬ");
+                            out.println(COMMAND_CONTINUE.getText());
                         }
                     }
                 }
