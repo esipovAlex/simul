@@ -8,10 +8,7 @@ import ru.simul.service.RenderWorld;
 import ru.simul.world.Names;
 import ru.simul.world.Universe;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,22 +24,25 @@ public class Simulation {
     public static void main(String[] args) throws InterruptedException {
         Simulation simulation = new Simulation();
         InitWorld initWorld = new InitWorld();
-        Universe universe = initWorld.createUniverse(new ReadProperties());
+        Properties properties = new ReadProperties().getProperties();
+        Universe universe = initWorld.createUniverse(properties);
         simulation.fillLoop(universe.getField().maxX(), universe.getField().maxY());
         out.println(START.getText());
         Thread keyListener =  new Thread(new KeyListener());
         keyListener.setDaemon(true);
         keyListener.start();
-        simulation.renderWithUniverse(universe, new RenderWorld());
+        simulation.renderWithUniverse(universe, new RenderWorld(), properties);
         out.println(END.getText());
     }
 
-    private void renderWithUniverse(Universe universe, RenderWorld renderWorld) throws InterruptedException {
+    private void renderWithUniverse(Universe universe, RenderWorld renderWorld, Properties properties) throws InterruptedException {
         int stepId = 1;
         universe.setStepId(stepId++);
         Names[][] names = renderWorld.prepare(universe);
         printStatusLine(universe);
         renderWorld.render(names);
+        Long renderSleep = Long.parseLong((String) properties.get("render.sleep"));
+        Long pauseSleep = Long.parseLong((String) properties.get("pause.sleep"));
         while (!universe.getHerbivores().isEmpty()) {
             List<Herbivore> herbivores = new ArrayList<>(universe.getHerbivores().values());
             herbivores.stream()
@@ -61,14 +61,14 @@ public class Simulation {
             }
             printStatusLine(universe);
             renderWorld.render(names);
-            TimeUnit.MILLISECONDS.sleep(1000L);
+            TimeUnit.MILLISECONDS.sleep(renderSleep);
             if (IS_PAUSED.get()) {
                 out.println();
                 out.println(ON_PAUSE.getText());
                 out.println(PRESS_SPASE_ENTER.getText());
                 while (IS_PAUSED.get()) {
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(pauseSleep);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                         break;
