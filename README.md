@@ -1,6 +1,7 @@
 # Симуляция 
 
-Программа написана в рамках проекта roadmap Сергея Жукова
+Программа написана в рамках проекта roadmap Сергея Жукова.
+https://zhukovsd.github.io/java-backend-learning-course/projects/simulation/
 
 Настройка параметров симуляции производится путем изменения соответствующих значений в файле application.properties .
 
